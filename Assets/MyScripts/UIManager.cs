@@ -11,7 +11,7 @@ namespace MyGame
         [SerializeField] private Image damageImage;
         [SerializeField] private Color flashColour = new Color(1f, 0f, 0f, 0.1f);
         [SerializeField] private float flashSpeed = 2f;
-
+        // TODO Вынести в GameController. Очки не должны считаться в UIManager. UIManager только обновляет значение, а не хранит его.
         public static int score;
 
         private PlayerController playerController;
@@ -22,22 +22,22 @@ namespace MyGame
             this.playerController = playerController;
             score = 0;
         }
-
+        // TODO Подписать каждый метод на соответствующий callback. Refresh в Update у UIController это конечно простое и быстрое решение, но лучше делать через события и подписки.
         public void Refresh()
         {
-            UpdateScore();
+            UpdateScore();  // TODO Создать событие OnEnemyDie в EnemiesController и на него подписываться через EnemyManager. Однако т.к. объектов EnemiesController много, надо создать одно событие в EmenyManager и передать на него ссылку во все объекты EnemiesManager.
             ShowGameOver();
-            ShowHitEffect();
+            ShowHitEffect();    // TODO Эту штуку можно сделать через DOTWEEEN. damageImage.DOFade(...)
         }
 
         public void UpdateScore()
         {
-            text.text = "Score: " + score;
+            text.text = "Score: " + score; // TODO Заменить на интерполяцию
         }
 
         public void ShowHitEffect()
         {
-            healthSlider.value = playerController.CurrentHealth;
+            healthSlider.value = playerController.CurrentHealth; // TODO Здесь нужно доработать. Брать относительные доли. Сейчас тебе повезло т.к. здоровья 100, а если не 100 будет, то value будет не правильно.
 
             if (playerController.Damage)
             {
