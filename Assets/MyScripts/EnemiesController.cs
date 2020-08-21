@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace MyGame
 {
@@ -8,10 +9,10 @@ namespace MyGame
         [SerializeField] private EnemiesHealth enemiesHealth;
         [SerializeField] private EnemiesAttack enemiesAttack;
         
-        public void Init(PlayerController playerController)
+        public void Init(PlayerController playerController, Action<int> OnEnemyDie)
         {
             enemiesMovement.Init(playerController, enemiesHealth);
-            enemiesHealth.Init();
+            enemiesHealth.Init(OnEnemyDie);
             enemiesAttack.Init(playerController, enemiesHealth);
         }
 

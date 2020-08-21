@@ -7,6 +7,8 @@ namespace MyGame
 {
     public class EnemiesManager : MonoBehaviour
     {
+        public event Action<int> OnEnemyDie;
+
         [SerializeField] private Transform enemiesParent; // место расположения 
         [SerializeField] private List<EnemyInfo> enemyInfo; // данные о объекте
         
@@ -47,7 +49,7 @@ namespace MyGame
                 {
                     EnemiesController enemiesController = Instantiate(enemyInfo[i].enemyPrefab, enemyInfo[i].spawnPoint.position, Quaternion.identity, enemiesParent);
                     enemiesController.gameObject.SetActive(false);
-                    enemiesController.Init(playerController); // инициализация данного объекта 
+                    enemiesController.Init(playerController, OnEnemyDieHandler); // инициализация данного объекта 
                     enemyByType.enemiesControllers.Add(enemiesController);// добавили в лист данных объектов данного типа но не больше poolCount
                 }
 
@@ -71,7 +73,7 @@ namespace MyGame
 
                     EnemiesController enemiesController = Instantiate(enemyInfo[i].enemyPrefab, enemyInfo[i].spawnPoint.position, Quaternion.identity, enemiesParent);
                     enemiesController.gameObject.SetActive(false);
-                    enemiesController.Init(playerController);
+                    enemiesController.Init(playerController, OnEnemyDieHandler);
                     enemiesByTypes[i].enemiesControllers.Add(enemiesController);
                     return enemiesController;
                 }
@@ -95,6 +97,11 @@ namespace MyGame
                     }
                 }
              }
+        }
+
+        private void OnEnemyDieHandler(int score)
+        {
+            OnEnemyDie?.Invoke(score);
         }
     }
 
