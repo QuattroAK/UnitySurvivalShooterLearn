@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace MyGame
@@ -15,6 +16,8 @@ namespace MyGame
         [SerializeField] private CapsuleCollider colliderEnemies;
         [SerializeField] private NavMeshAgent navAgent;
         [SerializeField] private Rigidbody rbEnemy;
+
+        public static Action<int> OnEnemyDie;
 
         public int currentHealth;
 
@@ -65,7 +68,8 @@ namespace MyGame
             navAgent.enabled = false;
             rbEnemy.isKinematic = true; // втердвое тело как кинематическое для облегчения движка и отсутсвия лишних вычислений физики 
             isSinking = true;
-            UIManager.score += scoreValue;
+            //UIManager.score += scoreValue;
+            OnEnemyDie?.Invoke(scoreValue);
             Invoke("ReturnPool", 2f);
         }
 

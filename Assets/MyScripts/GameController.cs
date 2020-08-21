@@ -12,23 +12,24 @@ namespace MyGame
         [SerializeField] private SoundController soundController;
         [SerializeField] private UIManager uIManager;
 
+        private int score;
         private float deleyRestart = 3f;
 
         private void Start()
         {
-            uIManager.Init(playerController);
+            score = 0;
+            uIManager.Init(playerController, score);
             soundController.Init();
             cameraMovement.Init(playerController.Transform);
             playerController.Init();
             enemiesManager.Init(playerController);
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             cameraMovement.RefreshPosition();
             playerController.Refresh();
             enemiesManager.Refresh();
-            uIManager.Refresh();
             RestartLevel();
         }
 

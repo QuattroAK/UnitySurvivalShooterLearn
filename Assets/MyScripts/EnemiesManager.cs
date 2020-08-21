@@ -9,10 +9,9 @@ namespace MyGame
     {
         [SerializeField] private Transform enemiesParent; // место расположения 
         [SerializeField] private List<EnemyInfo> enemyInfo; // данные о объекте
+        
         private List<EnemiesByType> enemiesByTypes; // враги по типам 
-
         private PlayerController playerController; 
-
         public float spawnTime = 3f; // задержка спауна 
 
         public void Init(PlayerController playerController)

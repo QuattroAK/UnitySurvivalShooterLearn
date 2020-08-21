@@ -36,7 +36,7 @@ namespace MyGame
         private void Move(float h, float v) // Перемещение игрока
         {
             movementVector.Set(h, 0f, v); // устанавливаем вектор ( он постоянно меняется в зависмости от нажатия клавиш)
-            movementVector = movementVector.normalized * speed * Time.deltaTime; // умножаем вектор на скорость и время
+            movementVector = movementVector.normalized * speed * Time.fixedDeltaTime; // умножаем вектор на скорость и время
             playerRigidbody.MovePosition(transform.position + movementVector);
         }
 

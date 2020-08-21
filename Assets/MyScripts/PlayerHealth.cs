@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace MyGame
@@ -7,6 +8,9 @@ namespace MyGame
     {
         [SerializeField] private int startingHealth = 100;
         [SerializeField] private Animator anim;
+
+        public static Action OnDamage;
+        public static Action OnGameOver;
         
         private PlayerMovement playerMovement;
         private PlayerShooting playerShooting;
@@ -62,6 +66,7 @@ namespace MyGame
         {
             damaged = true;
             currentHealth -= amount;
+            OnDamage?.Invoke();
             SoundController.Instance.PlayAudio(TypeAudio.PlayerDamage);
 
             if (currentHealth <= 0 && !isDead)
@@ -69,7 +74,6 @@ namespace MyGame
                 Death();
             }
 
-            StartCoroutine(Flashing());
         }
 
         private IEnumerator Flashing()
@@ -84,6 +88,7 @@ namespace MyGame
             playerShooting.DisableEffects();
             anim.SetTrigger("Die");
             SoundController.Instance.PlayAudio(TypeAudio.PlayerDeath);
+            OnGameOver?.Invoke();
         }
     }
 }
