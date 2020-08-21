@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,15 +18,14 @@ namespace MyGame
         [SerializeField] private NavMeshAgent navAgent;
         [SerializeField] private Rigidbody rbEnemy;
 
-        public static Action<int> OnEnemyDie;
-
+        private Action<int> OnEnemyDie;
         public int currentHealth;
-
         private bool isDead; 
         private bool isSinking; 
 
-        public void Init() 
+        public void Init(Action<int> OnEnemyDie) 
         {
+            this.OnEnemyDie += OnEnemyDie;
             currentHealth = startingHealth; 
         }
 
@@ -68,9 +68,8 @@ namespace MyGame
             navAgent.enabled = false;
             rbEnemy.isKinematic = true; // втердвое тело как кинематическое для облегчения движка и отсутсвия лишних вычислений физики 
             isSinking = true;
-            //UIManager.score += scoreValue;
             OnEnemyDie?.Invoke(scoreValue);
-            Invoke("ReturnPool", 2f);
+            DOVirtual.DelayedCall(2f, ReturnPool);
         }
 
         public void ReturnPool()

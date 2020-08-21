@@ -12,17 +12,18 @@ namespace MyGame
         [SerializeField] private SoundController soundController;
         [SerializeField] private UIManager uIManager;
 
-        private int score;
+        private int score = 0;
         private float deleyRestart = 3f;
 
         private void Start()
         {
-            score = 0;
-            uIManager.Init(playerController, score);
+            uIManager.Init(playerController);
             soundController.Init();
             cameraMovement.Init(playerController.Transform);
             playerController.Init();
             enemiesManager.Init(playerController);
+
+            enemiesManager.OnEnemyDie += UpdateScore;
         }
 
         private void FixedUpdate()
@@ -45,6 +46,12 @@ namespace MyGame
         {
             yield return new WaitForSeconds(deleyRestart);
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        private void UpdateScore(int score)
+        {
+            this.score += score;
+            uIManager.UpdateScore(this.score);
         }
     }
 }

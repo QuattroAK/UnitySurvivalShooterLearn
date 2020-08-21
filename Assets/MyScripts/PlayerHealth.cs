@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using UnityEngine;
 
 namespace MyGame
@@ -9,14 +8,23 @@ namespace MyGame
         [SerializeField] private int startingHealth = 100;
         [SerializeField] private Animator anim;
 
-        public static Action OnDamage;
-        public static Action OnGameOver;
+        private event Action OnDamage;
+        private event Action OnGameOver;
         
         private PlayerMovement playerMovement;
         private PlayerShooting playerShooting;
         private bool isDead;
-        private bool damaged;
-        private int currentHealth;
+        private float currentHealth;
+
+        #region Properties
+
+        public float StartingHealth
+        {
+            get
+            {
+                return startingHealth;
+            }
+        }
 
         public bool IsDead
         {
@@ -26,15 +34,7 @@ namespace MyGame
             }
         }
 
-        public bool Damage
-        {
-            get
-            {
-                return damaged;
-            }
-        }
-
-        public int CurrentHealth
+        public float CurrentHealth
         {
             get
             {
@@ -50,21 +50,20 @@ namespace MyGame
             }
         }
 
-        public void Init(PlayerMovement playerMovement, PlayerShooting playerShooting)
+        #endregion
+
+        public void Init(PlayerMovement playerMovement, PlayerShooting playerShooting, Action OnDamage, Action OnGameOver)
         {
             this.playerMovement = playerMovement;
             this.playerShooting = playerShooting;
             currentHealth = startingHealth;
-        }
 
-        public void RefreshHealth()
-        {
-            
+            this.OnDamage += OnDamage;
+            this.OnGameOver += OnGameOver;
         }
 
         public void TakeDamage(int amount)
         {
-            damaged = true;
             currentHealth -= amount;
             OnDamage?.Invoke();
             SoundController.Instance.PlayAudio(TypeAudio.PlayerDamage);
@@ -74,12 +73,6 @@ namespace MyGame
                 Death();
             }
 
-        }
-
-        private IEnumerator Flashing()
-        {
-            yield return new WaitForSeconds(0.02f);
-            damaged = false;
         }
 
         private void Death()

@@ -1,22 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace MyGame
 {
     [RequireComponent(typeof(MyGame.PlayerMovement))]
     public class PlayerController : MonoBehaviour
     {
+        public event Action OnDamage;
+        public event Action OnGameOver;
+
         [SerializeField] private PlayerMovement playerMovement;
         [SerializeField] private PlayerHealth playerHealth;
         [SerializeField] private PlayerShooting playerShooting;
 
-        public bool Damage
-        {
-            get
-            {
-                return playerHealth.Damage;
-            }
-        }
-        public Transform Transform 
+        #region Properties
+
+        public Transform Transform
         {
             get
             {
@@ -32,7 +31,7 @@ namespace MyGame
             }
         }
 
-        public int CurrentHealth
+        public float CurrentHealth
         {
             get
             {
@@ -40,23 +39,42 @@ namespace MyGame
             }
         }
 
+        public float StartingHealth
+        {
+            get
+            {
+                return playerHealth.StartingHealth;
+            }
+        }
+
+        #endregion
+
         public void Init()
         {
             playerMovement.Init(playerHealth);
-            playerHealth.Init(playerMovement, playerShooting);
+            playerHealth.Init(playerMovement, playerShooting, OnDamageHandler, OnGameOverHandler);
             playerShooting.Init(playerHealth);
         }
 
         public void Refresh()
         {
             playerMovement.RefreshMovement();
-            playerHealth.RefreshHealth();
             playerShooting.RefreshShooting();
         }
 
         public void TakeDamage(int amount)
         {
             playerHealth.TakeDamage(amount);
+        }
+
+        private void OnDamageHandler()
+        {
+            OnDamage?.Invoke();
+        }
+
+        private void OnGameOverHandler()
+        {
+            OnGameOver?.Invoke();
         }
     }
 }

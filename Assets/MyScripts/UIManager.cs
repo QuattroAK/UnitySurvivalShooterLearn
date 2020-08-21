@@ -10,31 +10,30 @@ namespace MyGame
         [SerializeField] private Animator gameOver;
         [SerializeField] private Slider healthSlider;
         [SerializeField] private Image damageImage;
-        [SerializeField] private Color flashColour = new Color(1f, 0f, 0f, 0.1f);
-        [SerializeField] private float flashSpeed = 2f;
 
+        private float flashSpeed = 0.2f;
         private PlayerController playerController;
-        private int score;
 
-        public void Init(PlayerController playerController, int score)
+        public void Init(PlayerController playerController)
         {
-            this.score = score;
             this.playerController = playerController;
-            EnemiesHealth.OnEnemyDie += UpdateScore;
-            PlayerHealth.OnDamage += ShowHitEffect;
-            PlayerHealth.OnGameOver += ShowGameOver;
+            playerController.OnDamage += ShowHitEffect;
+            playerController.OnGameOver += ShowGameOver;
         }
 
         public void UpdateScore(int scoreValue)
         {
-            score += scoreValue;
-            text.text = ($"Score: {score}");
+            text.text = $"Score: {scoreValue}";
         }
 
         public void ShowHitEffect()
         {
-            damageImage.DOFade(0.2f, 0.1f).SetLoops(2, LoopType.Yoyo);
-            healthSlider.value = playerController.CurrentHealth / 100;
+            if (!DOTween.IsTweening(damageImage))
+            {
+                damageImage.DOFade(0.1f, flashSpeed).SetLoops(2, LoopType.Yoyo).SetEase(Ease.InOutSine);
+            }
+            
+            healthSlider.value = playerController.CurrentHealth / playerController.StartingHealth;
         }
 
         public void ShowGameOver()
